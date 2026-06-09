@@ -1,6 +1,6 @@
 package com.unk114514.biometitle.config;
 
-public enum SubtitleTypeEnum {
+public enum SubtitleTypes {
     ID,
     NAME,
     TIPS

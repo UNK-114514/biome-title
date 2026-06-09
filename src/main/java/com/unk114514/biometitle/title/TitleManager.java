@@ -1,9 +1,11 @@
 package com.unk114514.biometitle.title;
 
 import com.unk114514.biometitle.config.BiomeTitleConfig;
-import com.unk114514.biometitle.config.SubtitleTypeEnum;
-import com.unk114514.biometitle.config.TitleColorEnum;
+import com.unk114514.biometitle.config.ColorTypes;
+import com.unk114514.biometitle.config.SubtitleTypes;
+import com.unk114514.biometitle.config.TitleColors;
 import com.unk114514.biometitle.helper.ColorHelper;
+import com.unk114514.biometitle.helper.CustomColorHelper;
 import com.unk114514.biometitle.helper.TitleHelper;
 import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.client.MinecraftClient;
@@ -11,6 +13,7 @@ import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.biome.Biome;
@@ -21,14 +24,14 @@ import java.util.Locale;
 public class TitleManager {
     private static boolean enabled;
     private static boolean showSubtitles;
-    private static TitleColorEnum color;
-    private boolean useCustomColor;
+    private static TitleColors color;
+    private ColorTypes colorType;
     private String customColor;
     private static int checkIntervalTicks;
     private static int fadeIn;
     private static int stay;
     private static int fadeOut;
-    private SubtitleTypeEnum subtitleType;
+    private SubtitleTypes subtitleType;
 
     private int tickCounter = 0;
     private Biome lastBiome = null;
@@ -43,7 +46,7 @@ public class TitleManager {
         enabled = config.enabled;
         showSubtitles = config.showSubtitles;
         color = config.color;
-        useCustomColor = config.useCustomColor;
+        colorType = config.colorType;
         customColor = config.customColor;
         checkIntervalTicks = config.checkIntervalTicks;
         fadeIn = config.fadeIn;
@@ -105,8 +108,8 @@ public class TitleManager {
         String subTitle = getSubtitle(biome, registry);
 
         TitleHelper.showTitle(
-                setColor(Text.literal(mainTitle)),
-                showSubtitles ? setColor(Text.literal(subTitle)) : null,
+                setColor(Text.literal(mainTitle), registry.getId(biome)),
+                showSubtitles ? setColor(Text.literal(subTitle), registry.getId(biome)) : null,
                 fadeIn, stay, fadeOut
         );
     }
@@ -144,22 +147,26 @@ public class TitleManager {
         return result.toString();
     }
 
-    private MutableText setColor(MutableText text) {
-        if (!useCustomColor) {
+    private MutableText setColor(MutableText text, Identifier biomeId) {
+        if (colorType == ColorTypes.PRESET) {
             return text.styled(style -> style.withColor(color.getColorValue()));
+        } else if (colorType == ColorTypes.CUSTOM) {
+            return text.styled(style -> style.withColor(ColorHelper.getColorValue(customColor)));
+        } else if (colorType == ColorTypes.FROM_CONFIG) {
+            return text.styled(style -> style.withColor(CustomColorHelper.getColor(biomeId)));
         }
-        return text.styled(style -> style.withColor(ColorHelper.getColorValue(customColor)));
+        return text.formatted(Formatting.WHITE);
     }
 
     private String getSubtitle(Biome biome, Registry<Biome> biomeRegistry) {
-        if (subtitleType == SubtitleTypeEnum.ID) {
+        if (subtitleType == SubtitleTypes.ID) {
             Identifier id = biomeRegistry.getId(biome);
             if (id != null) {
                 return id.toString();
             }
-        } else if (subtitleType == SubtitleTypeEnum.NAME) {
+        } else if (subtitleType == SubtitleTypes.NAME) {
             return getFormattedBiomePath(biome, biomeRegistry);
-        } else if (subtitleType == SubtitleTypeEnum.TIPS) {
+        } else if (subtitleType == SubtitleTypes.TIPS) {
             Identifier id = biomeRegistry.getId(biome);
             if (id != null) {
                 return Text.translatable("tips.biometitle.%s"

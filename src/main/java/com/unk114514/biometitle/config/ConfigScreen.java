@@ -10,7 +10,7 @@ import net.minecraft.text.Text;
 
 import java.util.Optional;
 
-import static com.unk114514.biometitle.BiomeTitle.manager;
+import static com.unk114514.biometitle.BiomeTitle.titleManager;
 
 public class ConfigScreen {
     public static Screen getConfigScreen(Screen parent) {
@@ -20,7 +20,7 @@ public class ConfigScreen {
                 .setParentScreen(parent)
                 .setTitle(Text.literal("Biome Title Config"))
                 .setSavingRunnable(() -> {
-                    manager.refresh();
+                    titleManager.refresh();
                     AutoConfig.getConfigHolder(BiomeTitleConfig.class).save();
                 });
 
@@ -37,14 +37,14 @@ public class ConfigScreen {
                 .setSaveConsumer(newValue -> config.showSubtitles = newValue)
                 .build());
 
-        general.addEntry(entryBuilder.startEnumSelector(Text.literal("Color"), TitleColorEnum.class, config.color)
-                .setDefaultValue(TitleColorEnum.WHITE)
+        general.addEntry(entryBuilder.startEnumSelector(Text.literal("Color"), TitleColors.class, config.color)
+                .setDefaultValue(TitleColors.WHITE)
                 .setSaveConsumer(newValue -> config.color = newValue)
                 .build());
 
-        general.addEntry(entryBuilder.startBooleanToggle(Text.literal("Use Custom Color"), config.useCustomColor)
-                .setDefaultValue(false)
-                .setSaveConsumer(newValue -> config.useCustomColor = newValue)
+        general.addEntry(entryBuilder.startEnumSelector(Text.literal("Color Type"), ColorTypes.class, config.colorType)
+                .setDefaultValue(ColorTypes.CUSTOM)
+                .setSaveConsumer(newValue -> config.colorType = newValue)
                 .build());
 
         general.addEntry(entryBuilder.startStrField(Text.literal("Custom Color"), config.customColor)
@@ -80,8 +80,8 @@ public class ConfigScreen {
                 .setSaveConsumer(newValue -> config.stay = newValue)
                 .build());
 
-        general.addEntry(entryBuilder.startEnumSelector(Text.literal("Subtitle Type"), SubtitleTypeEnum.class, config.subtitleType)
-                .setDefaultValue(SubtitleTypeEnum.NAME)
+        general.addEntry(entryBuilder.startEnumSelector(Text.literal("Subtitle Type"), SubtitleTypes.class, config.subtitleType)
+                .setDefaultValue(SubtitleTypes.NAME)
                 .setSaveConsumer(newValue -> config.subtitleType = newValue)
                 .setTooltip(Text.literal("Tips Translation Key: tips.biometitle.<biome_id_namespace>.<biome_id_path>"))
                 .build());

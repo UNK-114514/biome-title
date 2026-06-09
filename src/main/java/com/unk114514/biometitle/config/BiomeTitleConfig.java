@@ -14,10 +14,10 @@ public class BiomeTitleConfig implements ConfigData {
     public boolean showSubtitles = true;
 
     @ConfigEntry.Gui.EnumHandler()
-    public TitleColorEnum color = TitleColorEnum.WHITE;
+    public TitleColors color = TitleColors.WHITE;
 
-    @ConfigEntry.Gui.Tooltip()
-    public boolean useCustomColor = false;
+    @ConfigEntry.Gui.EnumHandler()
+    public ColorTypes colorType = ColorTypes.PRESET;
 
     @ConfigEntry.Gui.Tooltip()
     public String customColor = "16777215";
@@ -35,7 +35,7 @@ public class BiomeTitleConfig implements ConfigData {
     public int checkIntervalTicks = 5;
 
     @ConfigEntry.Gui.EnumHandler()
-    public SubtitleTypeEnum subtitleType = SubtitleTypeEnum.NAME;
+    public SubtitleTypes subtitleType = SubtitleTypes.NAME;
 
     @Override
     public void validatePostLoad() throws ValidationException {

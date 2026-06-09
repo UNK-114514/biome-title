@@ -1,6 +1,6 @@
 package com.unk114514.biometitle.config;
 
-public enum TitleColorEnum {
+public enum TitleColors {
     BLACK(0),
     DARK_BLUE(170),
     DARK_GREEN(43520),
@@ -20,7 +20,7 @@ public enum TitleColorEnum {
 
     private final int colorValue;
 
-    TitleColorEnum(int colorValue) {
+    TitleColors(int colorValue) {
         this.colorValue = colorValue;
     }
 
