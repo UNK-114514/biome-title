@@ -5,7 +5,7 @@ import com.unk114514.biometitle.config.ColorTypes;
 import com.unk114514.biometitle.config.SubtitleTypes;
 import com.unk114514.biometitle.config.TitleColors;
 import com.unk114514.biometitle.helper.ColorHelper;
-import com.unk114514.biometitle.helper.CustomColorHelper;
+import com.unk114514.biometitle.helper.ColorMapHelper;
 import com.unk114514.biometitle.helper.TitleHelper;
 import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.client.MinecraftClient;
@@ -20,20 +20,24 @@ import net.minecraft.world.biome.Biome;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Locale;
+import java.util.Map;
 
 public class TitleManager {
     private static boolean enabled;
     private static boolean showSubtitles;
     private static TitleColors color;
-    private ColorTypes colorType;
-    private String customColor;
+    private static ColorTypes colorType;
+    private static String customColor;
     private static int checkIntervalTicks;
+    private static int displayCooldown;
     private static int fadeIn;
     private static int stay;
     private static int fadeOut;
-    private SubtitleTypes subtitleType;
+    private static SubtitleTypes subtitleType;
+    private static Map<String, String> colorMap;
 
     private int tickCounter = 0;
+    private int cooldownCounter = 0;
     private Biome lastBiome = null;
 
     public TitleManager() {
@@ -49,10 +53,12 @@ public class TitleManager {
         colorType = config.colorType;
         customColor = config.customColor;
         checkIntervalTicks = config.checkIntervalTicks;
+        displayCooldown = config.displayCooldown;
         fadeIn = config.fadeIn;
         fadeOut = config.fadeOut;
         stay = config.stay;
         subtitleType = config.subtitleType;
+        colorMap = config.colorMap;
     }
 
     public void tick(MinecraftClient client) {
@@ -65,6 +71,9 @@ public class TitleManager {
         }
 
         if (tickCounter % checkIntervalTicks != 0) {
+            if (cooldownCounter > 0) {
+                cooldownCounter--;
+            }
             tickCounter++;
             return;
         }
@@ -76,9 +85,10 @@ public class TitleManager {
             return;
         }
 
-        if (currentBiome != lastBiome) {
+        if (currentBiome != lastBiome && cooldownCounter <= 0) {
             showTitleForBiome(client, currentBiome);
             lastBiome = currentBiome;
+            cooldownCounter = displayCooldown;
         }
     }
 
@@ -151,9 +161,9 @@ public class TitleManager {
         if (colorType == ColorTypes.PRESET) {
             return text.styled(style -> style.withColor(color.getColorValue()));
         } else if (colorType == ColorTypes.CUSTOM) {
-            return text.styled(style -> style.withColor(ColorHelper.getColorValue(customColor)));
+            return text.styled(style -> style.withColor(ColorHelper.tryParse(customColor)));
         } else if (colorType == ColorTypes.FROM_CONFIG) {
-            return text.styled(style -> style.withColor(CustomColorHelper.getColor(biomeId)));
+            return text.styled(style -> style.withColor(ColorMapHelper.getColor(colorMap, biomeId)));
         }
         return text.formatted(Formatting.WHITE);
     }

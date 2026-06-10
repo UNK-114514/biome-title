@@ -5,6 +5,9 @@ import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.annotation.Config;
 import me.shedaniel.autoconfig.annotation.ConfigEntry;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Config(name = "biome_title")
 public class BiomeTitleConfig implements ConfigData {
     @ConfigEntry.Gui.Tooltip()
@@ -23,6 +26,9 @@ public class BiomeTitleConfig implements ConfigData {
     public String customColor = "16777215";
 
     @ConfigEntry.Gui.Tooltip()
+    public int displayCooldown = 20;
+
+    @ConfigEntry.Gui.Tooltip()
     public int fadeIn = 10;
 
     @ConfigEntry.Gui.Tooltip()
@@ -37,10 +43,12 @@ public class BiomeTitleConfig implements ConfigData {
     @ConfigEntry.Gui.EnumHandler()
     public SubtitleTypes subtitleType = SubtitleTypes.NAME;
 
+    public Map<String, String> colorMap = new HashMap<>();
+
     @Override
     public void validatePostLoad() throws ValidationException {
         try {
-            ColorHelper.getColorValue(customColor);
+            ColorHelper.tryParse(customColor);
         } catch (NumberFormatException e) {
             throw new ValidationException("Invalid Color");
         }

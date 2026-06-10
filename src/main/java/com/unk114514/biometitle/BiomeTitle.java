@@ -3,7 +3,6 @@ package com.unk114514.biometitle;
 import com.terraformersmc.modmenu.api.ModMenuApi;
 import com.unk114514.biometitle.commands.BiomeTitleCommand;
 import com.unk114514.biometitle.config.BiomeTitleConfig;
-import com.unk114514.biometitle.config.CustomBiomeTitleColorConfigManager;
 import com.unk114514.biometitle.title.TitleManager;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
@@ -17,17 +16,10 @@ public class BiomeTitle implements ClientModInitializer, ModMenuApi {
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
 	public static TitleManager titleManager;
-	public static CustomBiomeTitleColorConfigManager customBiomeTitleColorConfigManager;
 
 	public static void getTitleManager() {
 		if (titleManager == null) {
 			titleManager = new TitleManager();
-		}
-	}
-
-	public static void getCustomBiomeTitleColorConfigManager() {
-		if (customBiomeTitleColorConfigManager == null) {
-			customBiomeTitleColorConfigManager = new CustomBiomeTitleColorConfigManager();
 		}
 	}
 
@@ -37,6 +29,5 @@ public class BiomeTitle implements ClientModInitializer, ModMenuApi {
 		ClientTickEvents.END_CLIENT_TICK.register(client -> titleManager.tick(client));
 		BiomeTitleCommand.register();
 		getTitleManager();
-		getCustomBiomeTitleColorConfigManager();
 	}
 }

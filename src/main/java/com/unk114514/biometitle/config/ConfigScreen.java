@@ -51,7 +51,7 @@ public class ConfigScreen {
                 .setDefaultValue("16777215")
                 .setErrorSupplier(value -> {
                     try {
-                        ColorHelper.getColorValue(value);
+                        ColorHelper.tryParse(value);
                     } catch (NumberFormatException e) {
                         return Optional.of(Text.literal("Invalid Color"));
                     }
@@ -60,9 +60,19 @@ public class ConfigScreen {
                 .setSaveConsumer(newValue -> config.customColor = newValue)
                 .build());
 
+        general.addEntry(entryBuilder.startIntField(Text.literal("Display Cooldown"), config.displayCooldown)
+                .setDefaultValue(20)
+                .setSaveConsumer(newValue -> config.displayCooldown = newValue)
+                .build());
+
         general.addEntry(entryBuilder.startIntField(Text.literal("Check Interval Ticks"), config.checkIntervalTicks)
                 .setDefaultValue(5)
                 .setSaveConsumer(newValue -> config.checkIntervalTicks = newValue)
+                .build());
+
+        general.addEntry(entryBuilder.startIntField(Text.literal("Fade In (gt)"), config.fadeIn)
+                .setDefaultValue(10)
+                .setSaveConsumer(newValue -> config.fadeIn = newValue)
                 .build());
 
         general.addEntry(entryBuilder.startIntField(Text.literal("Fade In (gt)"), config.fadeIn)
