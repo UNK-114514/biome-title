@@ -11,6 +11,8 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Random;
+
 public class BiomeTitle implements ClientModInitializer, ModMenuApi {
 	public static final String MOD_ID = "biome_title";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
@@ -19,7 +21,7 @@ public class BiomeTitle implements ClientModInitializer, ModMenuApi {
 
 	public static void getTitleManager() {
 		if (titleManager == null) {
-			titleManager = new TitleManager();
+			titleManager = new TitleManager(new Random());
 		}
 	}
 

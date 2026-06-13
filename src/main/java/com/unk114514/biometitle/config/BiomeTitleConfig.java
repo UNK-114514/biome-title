@@ -10,40 +10,44 @@ import java.util.Map;
 
 @Config(name = "biome_title")
 public class BiomeTitleConfig implements ConfigData {
-    @ConfigEntry.Gui.Tooltip()
+    @ConfigEntry.Gui.Tooltip
     public boolean enabled = true;
 
-    @ConfigEntry.Gui.Tooltip()
+    @ConfigEntry.Gui.Tooltip
     public boolean showSubtitles = true;
 
-    @ConfigEntry.Gui.EnumHandler()
+    @ConfigEntry.Gui.Tooltip
+    public boolean enableShadows = true;
+
+    @ConfigEntry.Gui.EnumHandler
     public TitleColors color = TitleColors.WHITE;
 
-    @ConfigEntry.Gui.EnumHandler()
+    @ConfigEntry.Gui.EnumHandler
     public ColorTypes colorType = ColorTypes.PRESET;
 
-    @ConfigEntry.Gui.Tooltip()
+    @ConfigEntry.Gui.Tooltip
     public String customColor = "16777215";
 
-    @ConfigEntry.Gui.Tooltip()
+    @ConfigEntry.Gui.Tooltip
     public int displayCooldown = 20;
 
-    @ConfigEntry.Gui.Tooltip()
-    public int fadeIn = 10;
-
-    @ConfigEntry.Gui.Tooltip()
-    public int stay = 60;
-
-    @ConfigEntry.Gui.Tooltip()
-    public int fadeOut = 10;
-
-    @ConfigEntry.Gui.Tooltip()
+    @ConfigEntry.Gui.Tooltip
     public int checkIntervalTicks = 5;
 
-    @ConfigEntry.Gui.EnumHandler()
+    @ConfigEntry.Gui.Tooltip
+    public int fadeIn = 10;
+
+    @ConfigEntry.Gui.Tooltip
+    public int stay = 60;
+
+    @ConfigEntry.Gui.Tooltip
+    public int fadeOut = 10;
+
+    @ConfigEntry.Gui.EnumHandler
     public SubtitleTypes subtitleType = SubtitleTypes.NAME;
 
-    public Map<String, String> colorMap = new HashMap<>();
+    @ConfigEntry.Gui.CollapsibleObject
+    public Map<String, String> titleColors = new HashMap<>();
 
     @Override
     public void validatePostLoad() throws ValidationException {

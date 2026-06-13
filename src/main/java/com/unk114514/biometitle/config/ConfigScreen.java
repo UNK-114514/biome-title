@@ -37,6 +37,11 @@ public class ConfigScreen {
                 .setSaveConsumer(newValue -> config.showSubtitles = newValue)
                 .build());
 
+        general.addEntry(entryBuilder.startBooleanToggle(Text.literal("Enable Shadows"), config.enableShadows)
+                .setDefaultValue(true)
+                .setSaveConsumer(newValue -> config.enableShadows = newValue)
+                .build());
+
         general.addEntry(entryBuilder.startEnumSelector(Text.literal("Color"), TitleColors.class, config.color)
                 .setDefaultValue(TitleColors.WHITE)
                 .setSaveConsumer(newValue -> config.color = newValue)

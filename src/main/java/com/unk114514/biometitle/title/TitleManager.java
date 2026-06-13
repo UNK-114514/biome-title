@@ -5,13 +5,14 @@ import com.unk114514.biometitle.config.ColorTypes;
 import com.unk114514.biometitle.config.SubtitleTypes;
 import com.unk114514.biometitle.config.TitleColors;
 import com.unk114514.biometitle.helper.ColorHelper;
-import com.unk114514.biometitle.helper.ColorMapHelper;
+import com.unk114514.biometitle.helper.CustomColorHelper;
 import com.unk114514.biometitle.helper.TitleHelper;
 import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.text.MutableText;
+import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
@@ -21,10 +22,14 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Locale;
 import java.util.Map;
+import java.util.Random;
 
 public class TitleManager {
+    private final Random random;
+
     private static boolean enabled;
     private static boolean showSubtitles;
+    private static boolean enableShadows;
     private static TitleColors color;
     private static ColorTypes colorType;
     private static String customColor;
@@ -34,13 +39,14 @@ public class TitleManager {
     private static int stay;
     private static int fadeOut;
     private static SubtitleTypes subtitleType;
-    private static Map<String, String> colorMap;
+    private static Map<String, String> colors;
 
     private int tickCounter = 0;
     private int cooldownCounter = 0;
     private Biome lastBiome = null;
 
-    public TitleManager() {
+    public TitleManager(Random random) {
+        this.random = random;
         refresh();
     }
 
@@ -49,6 +55,7 @@ public class TitleManager {
                 .getConfig();
         enabled = config.enabled;
         showSubtitles = config.showSubtitles;
+        enableShadows = config.enableShadows;
         color = config.color;
         colorType = config.colorType;
         customColor = config.customColor;
@@ -58,7 +65,7 @@ public class TitleManager {
         fadeOut = config.fadeOut;
         stay = config.stay;
         subtitleType = config.subtitleType;
-        colorMap = config.colorMap;
+        colors = config.titleColors;
     }
 
     public void tick(MinecraftClient client) {
@@ -70,14 +77,12 @@ public class TitleManager {
             return;
         }
 
+        tickCounter++;
+        cooldownCounter--;
+
         if (tickCounter % checkIntervalTicks != 0) {
-            if (cooldownCounter > 0) {
-                cooldownCounter--;
-            }
-            tickCounter++;
             return;
         }
-        tickCounter++;
 
         BlockPos playerPos = client.player.getBlockPos();
         Biome currentBiome = getBiomeAt(playerPos, client);
@@ -118,8 +123,8 @@ public class TitleManager {
         String subTitle = getSubtitle(biome, registry);
 
         TitleHelper.showTitle(
-                setColor(Text.literal(mainTitle), registry.getId(biome)),
-                showSubtitles ? setColor(Text.literal(subTitle), registry.getId(biome)) : null,
+                setShadow(setColor(Text.literal(mainTitle), registry.getId(biome))),
+                showSubtitles ? setShadow(setColor(Text.literal(subTitle), registry.getId(biome))) : null,
                 fadeIn, stay, fadeOut
         );
     }
@@ -163,9 +168,18 @@ public class TitleManager {
         } else if (colorType == ColorTypes.CUSTOM) {
             return text.styled(style -> style.withColor(ColorHelper.tryParse(customColor)));
         } else if (colorType == ColorTypes.FROM_CONFIG) {
-            return text.styled(style -> style.withColor(ColorMapHelper.getColor(colorMap, biomeId)));
+            return text.styled(style -> style.withColor(CustomColorHelper.getColor(colors, biomeId)));
+        } else if (colorType == ColorTypes.RANDOM) {
+            return text.styled(style -> style.withColor(random.nextInt(0, 0xFFFFFF + 1)));
         }
         return text.formatted(Formatting.WHITE);
+    }
+
+    private MutableText setShadow(MutableText text) {
+        if (!enableShadows) {
+            return text.styled((Style::withoutShadow));
+        }
+        return text;
     }
 
     private String getSubtitle(Biome biome, Registry<Biome> biomeRegistry) {
