@@ -11,10 +11,7 @@ import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKeys;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Style;
 import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.biome.Biome;
@@ -23,6 +20,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
+
+import static com.unk114514.biometitle.helper.TextStyleHelper.setShadow;
+import static com.unk114514.biometitle.helper.TextStyleHelper.withColor;
 
 public class TitleManager {
     private final Random random;
@@ -122,9 +122,11 @@ public class TitleManager {
         String mainTitle = getLocalizedBiomeName(biome, registry);
         String subTitle = getSubtitle(biome, registry);
 
+        int color = getColor(registry.getId(biome));
+
         TitleHelper.showTitle(
-                setShadow(setColor(Text.literal(mainTitle), registry.getId(biome))),
-                showSubtitles ? setShadow(setColor(Text.literal(subTitle), registry.getId(biome))) : null,
+                setShadow(withColor(Text.literal(mainTitle), color), enableShadows),
+                showSubtitles ? setShadow(withColor(Text.literal(subTitle), color), enableShadows) : null,
                 fadeIn, stay, fadeOut
         );
     }
@@ -162,24 +164,17 @@ public class TitleManager {
         return result.toString();
     }
 
-    private MutableText setColor(MutableText text, Identifier biomeId) {
+    private int getColor(Identifier biomeId) {
         if (colorType == ColorTypes.PRESET) {
-            return text.styled(style -> style.withColor(color.getColorValue()));
+            return color.getColorValue();
         } else if (colorType == ColorTypes.CUSTOM) {
-            return text.styled(style -> style.withColor(ColorHelper.tryParse(customColor)));
+            return ColorHelper.tryParse(customColor);
         } else if (colorType == ColorTypes.FROM_CONFIG) {
-            return text.styled(style -> style.withColor(CustomColorHelper.getColor(colors, biomeId)));
+            return CustomColorHelper.getColor(colors, biomeId);
         } else if (colorType == ColorTypes.RANDOM) {
-            return text.styled(style -> style.withColor(random.nextInt(0, 0xFFFFFF + 1)));
+            return random.nextInt(0, 0xFFFFFF + 1);
         }
-        return text.formatted(Formatting.WHITE);
-    }
-
-    private MutableText setShadow(MutableText text) {
-        if (!enableShadows) {
-            return text.styled((Style::withoutShadow));
-        }
-        return text;
+        return 16777215;
     }
 
     private String getSubtitle(Biome biome, Registry<Biome> biomeRegistry) {

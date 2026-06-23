@@ -56,5 +56,13 @@ public class BiomeTitleConfig implements ConfigData {
         } catch (NumberFormatException e) {
             throw new ValidationException("Invalid Color");
         }
+
+        if (titleColors == null) {
+            titleColors = new HashMap<>();
+        }
+
+        if (titleColors.isEmpty()) {
+            titleColors.putAll(DefaultTitleColor.colors);
+        }
     }
 }

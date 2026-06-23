@@ -25,6 +25,9 @@ public class ConfigScreen {
                 });
 
         ConfigCategory general = builder.getOrCreateCategory(Text.literal("General"));
+        ConfigCategory color = builder.getOrCreateCategory(Text.literal("Color"));
+        ConfigCategory advanced = builder.getOrCreateCategory(Text.literal("Advanced"));
+
         ConfigEntryBuilder entryBuilder = builder.entryBuilder();
 
         general.addEntry(entryBuilder.startBooleanToggle(Text.literal("Enabled"), config.enabled)
@@ -42,17 +45,17 @@ public class ConfigScreen {
                 .setSaveConsumer(newValue -> config.enableShadows = newValue)
                 .build());
 
-        general.addEntry(entryBuilder.startEnumSelector(Text.literal("Color"), TitleColors.class, config.color)
+        color.addEntry(entryBuilder.startEnumSelector(Text.literal("Color"), TitleColors.class, config.color)
                 .setDefaultValue(TitleColors.WHITE)
                 .setSaveConsumer(newValue -> config.color = newValue)
                 .build());
 
-        general.addEntry(entryBuilder.startEnumSelector(Text.literal("Color Type"), ColorTypes.class, config.colorType)
+        color.addEntry(entryBuilder.startEnumSelector(Text.literal("Color Type"), ColorTypes.class, config.colorType)
                 .setDefaultValue(ColorTypes.CUSTOM)
                 .setSaveConsumer(newValue -> config.colorType = newValue)
                 .build());
 
-        general.addEntry(entryBuilder.startStrField(Text.literal("Custom Color"), config.customColor)
+        color.addEntry(entryBuilder.startStrField(Text.literal("Custom Color"), config.customColor)
                 .setDefaultValue("16777215")
                 .setErrorSupplier(value -> {
                     try {
@@ -65,37 +68,37 @@ public class ConfigScreen {
                 .setSaveConsumer(newValue -> config.customColor = newValue)
                 .build());
 
-        general.addEntry(entryBuilder.startIntField(Text.literal("Display Cooldown"), config.displayCooldown)
+        advanced.addEntry(entryBuilder.startIntField(Text.literal("Display Cooldown"), config.displayCooldown)
                 .setDefaultValue(20)
                 .setSaveConsumer(newValue -> config.displayCooldown = newValue)
                 .build());
 
-        general.addEntry(entryBuilder.startIntField(Text.literal("Check Interval Ticks"), config.checkIntervalTicks)
+        advanced.addEntry(entryBuilder.startIntField(Text.literal("Check Interval Ticks"), config.checkIntervalTicks)
                 .setDefaultValue(5)
                 .setSaveConsumer(newValue -> config.checkIntervalTicks = newValue)
                 .build());
 
-        general.addEntry(entryBuilder.startIntField(Text.literal("Fade In (gt)"), config.fadeIn)
+        advanced.addEntry(entryBuilder.startIntField(Text.literal("Fade In (gt)"), config.fadeIn)
                 .setDefaultValue(10)
                 .setSaveConsumer(newValue -> config.fadeIn = newValue)
                 .build());
 
-        general.addEntry(entryBuilder.startIntField(Text.literal("Fade In (gt)"), config.fadeIn)
+        advanced.addEntry(entryBuilder.startIntField(Text.literal("Fade In (gt)"), config.fadeIn)
                 .setDefaultValue(10)
                 .setSaveConsumer(newValue -> config.fadeIn = newValue)
                 .build());
 
-        general.addEntry(entryBuilder.startIntField(Text.literal("Fade Out (gt)"), config.fadeOut)
+        advanced.addEntry(entryBuilder.startIntField(Text.literal("Fade Out (gt)"), config.fadeOut)
                 .setDefaultValue(10)
                 .setSaveConsumer(newValue -> config.fadeOut = newValue)
                 .build());
 
-        general.addEntry(entryBuilder.startIntField(Text.literal("Stay (gt)"), config.stay)
+        advanced.addEntry(entryBuilder.startIntField(Text.literal("Stay (gt)"), config.stay)
                 .setDefaultValue(60)
                 .setSaveConsumer(newValue -> config.stay = newValue)
                 .build());
 
-        general.addEntry(entryBuilder.startEnumSelector(Text.literal("Subtitle Type"), SubtitleTypes.class, config.subtitleType)
+        advanced.addEntry(entryBuilder.startEnumSelector(Text.literal("Subtitle Type"), SubtitleTypes.class, config.subtitleType)
                 .setDefaultValue(SubtitleTypes.NAME)
                 .setSaveConsumer(newValue -> config.subtitleType = newValue)
                 .setTooltip(Text.literal("Tips Translation Key: tips.biometitle.<biome_id_namespace>.<biome_id_path>"))
